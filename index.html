@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<title>Hello world</title>
+  	<style>
+  	body {
+  		font-family: sans-serif;
+  		margin: 0;
+  	}
+  	#send {
+  		float: right;
+  		bottom: 0;
+  		right: 0;
+  		position: fixed;
+  		border: 1px solid #4CAF50;
+  		background: white;
+  		transition: background 0.5s, color 0.5s;
+  		padding: 9px 19px;
+  		margin: 20px;
+  		font-size: 15px;
+  	}
+  	#send:hover {
+  		background: #4CAF50;
+  		color: white;
+  	}
+  	#text {
+  		bottom: 0;
+  		position: fixed;
+  		margin: 20px;
+  		margin-right: 0;
+  		padding: 5px;
+  		width: 72%;
+  		height: 25px;
+  		border-radius: 5px;
+  		left: 235px;
+  	}
+  	#chat, ul {
+  		list-style-type: none;
+  		padding: 0;
+  		font-size: 15px;
+  	}
+  	.name {
+  		color: blue;
+  		font-weight: bold;
+  		border-bottom: 1px dotted black;
+  	}
+  	#client {
+  		color: red;
+  		font-weight: bold;
+  		border-bottom: 1px dotted black;
+  	}
+  	.msg {
+  		padding: 5px;
+  		margin-left: 235px;
+  	}
+  	#bar {
+  		float: left;
+  		width: 235px;
+  		height: 100%;
+  		position: fixed;
+  		border-right: 1px solid black;
+  	}
+  	ul {
+  		margin: 0px;
+  	}
+  	#li {
+  		margin: 0px;
+  	}
+  	#users {
+  		left: 0;
+  		font-size: 16px;
+  		width: 235px;
+  		box-sizing: border-box;
+  		overflow: hidden;
+  		position: fixed;
+  	}
+  	.user {
+  		padding: 15px;
+  		padding-right: 100%;
+  		box-sizing: border-box;
+  		overflow: hidden;
+  		box-sizing: border-box;
+  	}
+  	.user:hover {
+  		background: rgb(245,245,245);
+  	}
+  	</style>
+  </head>
+  <script src="/socket.io/socket.io.js"></script>
+  <body id='body'>
+  	<div id='bar'>
+  		<ul id='users'>
+  			<li class='user'></li>
+  			<li class='user'></li>
+  			<li class='user'></li>
+  			<li class='user'></li>
+  			<li class='user'></li>
+  			<li class='user'></li>
+  			<li class='user'></li>
+  			<li class='user'></li>
+  			<li class='user'></li>
+  		</ul>
+  	</div>
+  	<ul id='chat'>
+  		<li id='li'></li>
+  		<br>
+  		<br>
+  		<br>
+  		<br>
+  		<br>
+  		<br>
+  		<br>
+  		<br>
+  		<li id='last'></li>
+  	</ul>
+  	<input id='text' type='text' style='border: 1px solid black' placeholder='Type a message...'>
+  	<button id='send' onclick='send(); document.getElementById("text").value = "";'>Send</button>
+  </body>
+  <script>
+	var socket = io();
+	socket.on('msg', function(data) {
+		var node = document.createElement("li");
+		node.className = 'msg';
+		node.innerHTML = data.text;
+		document.getElementById("li").appendChild(node);
+		document.getElementById('text').value = '';
+        var item = document.getElementById('last');
+        item.scrollIntoView(false);
+        item.scrollIntoView({behavior: "smooth", block: "end"});
+	});
+	socket.on('users', function(data) {
+		var usersBar = document.getElementById('users');
+		if (data.online) {
+			usersBar.getElementsByTagName('li')[data.number].innerHTML = data.users;
+		} else {
+			usersBar.getElementsByTagName('li')[data.number].innerHTML = '';
+		}
+	})
+	function send() {
+		x = document.getElementById("text").value;
+		socket.emit("message", x);
+    }
+    document.getElementById("text").addEventListener("keydown", function (e) {
+    	if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+        	send();
+    	}
+    })
+    function name() {
+    	if (!localStorage.getItem("name")) {
+    		var name = prompt("What's your name?");
+    		localStorage.setItem('name', name);
+    	} else {
+    		var name = localStorage.getItem("name");
+    	}
+    	socket.emit("name", name);
+    }
+    function delName() {
+    	localStorage.removeItem("name");
+    	socket.emit('delName', name)
+    }
+    function delLog() {
+    	socket.emit('delLog', '');
+    }
+    window.onload = name();
+</script>
+</html>
