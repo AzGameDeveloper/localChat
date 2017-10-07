@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "chat",
   "main": "index.js",
+  "repositories": "https://github.com/AzGameDeveloper/localChat",
   "scripts": {
     "test": "chat"
   },

@@ -19,8 +19,7 @@ io.on('connection', function(socket) {
 		name.splice(index, 1);
 		for (var i = 0; i <= name.length - 1; i++) {
       io.emit('users', {users: name[i], number: i, online: false});
-    }
-	})
+    }	})
   socket.on('log', function(data) {
     for (var i = 0; i <= data.length; i++) {
       socket.broadcast.emit('msg', {text: '<span class="name">' + username + '</span>' + ": " + data[i]})
@@ -30,7 +29,7 @@ io.on('connection', function(socket) {
   socket.on('message', function(data) {
    	socket.broadcast.emit('msg', {text: '<span class="name">' + username + '</span>' + ": " + data})
    	socket.emit('msg', {text: '<span id="client">' + username + '</span>' + ": " + data})
-    var msg = '<span class="name">' + username + '</span>' + ": " + data + '|/'
+    var msg = '<span class="read">' + username + '</span>' + ": " + data + '|/'
     fs.appendFile('log.txt', msg, function (err) {
       if (err) throw err;
     });
@@ -45,7 +44,6 @@ io.on('connection', function(socket) {
   socket.on('delName', function(data) {
    	var x = name.indexOf(data)
    	name.splice(x, 1);
-   	usernamed = false;
   })
   socket.on('delLog', function() {
     fs.writeFile('log.txt', '', (err) => {
@@ -56,10 +54,8 @@ io.on('connection', function(socket) {
     if (err) throw err;
     var log = data.split('|/');
     for (var i = 0; i <= log.length - 2; i++) {
-      socket.broadcast.emit('msg', {text: log[i]})
       socket.emit('msg', {text: log[i]})
     }
   });
 });
-http.listen(3000, function() {
-});
+http.listen(3000, function(){});
