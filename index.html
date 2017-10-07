@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-  	<title>Hello world</title>
+  	<title>Chatroom</title>
   	<style>
   	body {
   		font-family: sans-serif;
@@ -84,6 +84,17 @@
   	.user:hover {
   		background: rgb(245,245,245);
   	}
+  	.read {
+  		color: darkviolet;
+  		font-weight: bold;
+  		border-bottom: 1px black dotted;
+  	}
+  	a {
+  		color: black;
+  		text-decoration: none;
+  		padding: 100%;
+  		display: block;
+  	}
   	</style>
   </head>
   <script src="/socket.io/socket.io.js"></script>
@@ -131,7 +142,7 @@
 	socket.on('users', function(data) {
 		var usersBar = document.getElementById('users');
 		if (data.online) {
-			usersBar.getElementsByTagName('li')[data.number].innerHTML = data.users;
+			usersBar.getElementsByTagName('li')[data.number].innerHTML = '<a href="' + data.users + '">' + data.users + '</a>';
 		} else {
 			usersBar.getElementsByTagName('li')[data.number].innerHTML = '';
 		}
@@ -161,6 +172,11 @@
     function delLog() {
     	socket.emit('delLog', '');
     }
+    socket.on('logLoaded', function(data) {
+    	if (data.loaded) {
+    		var logLoaded = true;
+    	}
+    })
     window.onload = name();
 </script>
 </html>
